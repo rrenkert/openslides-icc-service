@@ -15,7 +15,7 @@ The service needs some secrets to run. You can create them with:
 ```
 mkdir secrets
 printf "password" > secrets/postgres_password
-printf "my_token_key" > secrets/auth_token_key 
+printf "my_token_key" > secrets/auth_token_key
 printf "my_cookie_key" > secrets/auth_cookie_key
 ```
 
@@ -49,30 +49,10 @@ the docker argument --network host. The auth-secrets have to given as a file.
 
 ```
 docker build . --tag openslides-icc
-printf "my_token_key" > auth_token_key 
+printf "my_token_key" > auth_token_key
 printf "my_cookie_key" > auth_cookie_key
 docker run --network host -v $PWD/auth_token_key:/run/secrets/auth_token_key -v $PWD/auth_cookie_key:/run/secrets/auth_cookie_key openslides-icc
 ```
-
-
-### With Auto Restart
-
-To restart the service when ever a source file has shanged, the tool
-[CompileDaemon](https://github.com/githubnemo/CompileDaemon) can help.
-
-```
-go install github.com/githubnemo/CompileDaemon@latest
-CompileDaemon -log-prefix=false -build "go build" -command "./openslides-icc-service"
-```
-
-The make target `build-dev` creates a docker image that uses this tool. The
-environment varialbe `OPENSLIDES_DEVELOPMENT` is used to use default auth keys.
-
-```
-make build-dev
-docker run --network host --env OPENSLIDES_DEVELOPMENT=true openslides-icc-dev
-```
-
 
 ## Test
 

@@ -184,7 +184,7 @@ func (mp *messageProvider) Next(ctx context.Context) (OutMessage, error) {
 
 	for {
 		if len(mp.messageBuf) == 0 {
-			tid, messages, err := mp.topic.Receive(ctx, mp.tid)
+			tid, messages, err := mp.topic.ReceiveSince(ctx, mp.tid)
 			if err != nil {
 				return OutMessage{}, fmt.Errorf("fetching message from topic: %w", err)
 			}

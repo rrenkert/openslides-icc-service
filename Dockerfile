@@ -1,6 +1,6 @@
 ARG CONTEXT=prod
 
-FROM golang:1.25.0-alpine as base
+FROM golang:1.25.4-alpine AS base
 
 ## Setup
 ARG CONTEXT
@@ -19,18 +19,20 @@ COPY internal internal
 ## External Information
 EXPOSE 9007
 
+## Command
+COPY ./dev/command.sh ./
+RUN chmod +x command.sh
+CMD ["./command.sh"]
+
 # Development Image
 
-FROM base as dev
+FROM base AS dev
 
 RUN ["go", "install", "github.com/githubnemo/CompileDaemon@latest"]
 
-## Command
-CMD CompileDaemon -log-prefix=false -build="go build" -command="./openslides-icc-service"
-
 # Testing Image
 
-FROM dev as tests
+FROM dev AS tests
 
 COPY dev/container-tests.sh ./dev/container-tests.sh
 
@@ -41,17 +43,15 @@ RUN apk add --no-cache \
     go install golang.org/x/lint/golint@latest && \
     chmod +x dev/container-tests.sh
 
-## Command
 STOPSIGNAL SIGKILL
-CMD ["sleep", "inf"]
 
 # Production Image
 
-FROM base as builder
+FROM base AS builder
 
 RUN go build
 
-FROM scratch as prod
+FROM scratch AS prod
 
 ## Setup
 ARG CONTEXT

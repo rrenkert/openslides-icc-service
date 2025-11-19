@@ -126,7 +126,7 @@ func (a *Applause) Receive(ctx context.Context, tid uint64, meetingID int) (newT
 
 	for {
 		var messages []string
-		tid, messages, err = a.topic.Receive(ctx, tid)
+		tid, messages, err = a.topic.ReceiveSince(ctx, tid)
 		if err != nil {
 			return 0, MSG{}, fmt.Errorf("receiving message from topic: %w", err)
 		}
